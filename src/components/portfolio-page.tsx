@@ -25,6 +25,7 @@ import {
   X,
 } from "lucide-react";
 import heroPortrait from "@/assets/gayan-hero-portrait.jpg";
+import { TypewriterText } from "@/components/typewriter-text";
 import { Button } from "@/components/ui/button";
 import { projects, skillGroups, type Project } from "@/data/portfolio";
 
@@ -411,7 +412,7 @@ export function PortfolioPage() {
             className="pointer-events-none absolute inset-0 bg-technical-grid opacity-40"
             aria-hidden="true"
           />
-          <div className="mx-auto grid w-full max-w-7xl items-center gap-8 px-5 pb-16 sm:px-8 md:grid-cols-[1.08fr_0.92fr] md:pb-20 lg:px-12">
+          <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-8 px-5 pb-16 sm:px-8 md:grid-cols-[1.08fr_0.92fr] md:pb-20 lg:px-12">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -433,9 +434,7 @@ export function PortfolioPage() {
                 <br />
                 <span className="text-muted-foreground">Karunarathne</span>
               </h1>
-              <p className="mt-6 font-display text-xl font-medium text-primary sm:text-2xl">
-                Full-Stack · AI · Cloud
-              </p>
+              <TypewriterText />
               <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
                 Computer Engineering graduate with industry experience building production web
                 applications across full-stack development, AI-powered systems, cloud infrastructure
