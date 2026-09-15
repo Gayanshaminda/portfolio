@@ -245,12 +245,39 @@ function ProjectDetailView({
 function ProjectsShowcase() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [detailIndex, setDetailIndex] = useState<number | null>(null);
+  const [direction, setDirection] = useState(1);
   const containerRef = useRef<HTMLDivElement>(null);
   const pointerRef = useRef<{ x: number; y: number } | null>(null);
+  const prefersReducedMotion = useReducedMotion();
   const count = projects.length;
 
-  const goTo = (index: number) => setActiveIndex((index + count) % count);
+  const goTo = (index: number, requestedDirection?: number) => {
+    const nextIndex = (index + count) % count;
+    if (nextIndex === activeIndex) return;
+
+    setDirection(requestedDirection ?? (nextIndex > activeIndex ? 1 : -1));
+    setActiveIndex(nextIndex);
+  };
   const active = projects[(detailIndex ?? activeIndex) % count]!;
+
+  const slideVariants = {
+    enter: (slideDirection: number) => ({
+      opacity: prefersReducedMotion ? 1 : 0.35,
+      x: prefersReducedMotion ? 0 : slideDirection * 36,
+    }),
+    center: { opacity: 1, x: 0 },
+    exit: (slideDirection: number) => ({
+      opacity: prefersReducedMotion ? 1 : 0,
+      x: prefersReducedMotion ? 0 : slideDirection * -36,
+    }),
+  };
+
+  useEffect(() => {
+    projects.forEach((project) => {
+      const image = new Image();
+      image.src = project.image;
+    });
+  }, []);
 
   useEffect(() => {
     const onMove = (event: PointerEvent) => {
@@ -278,6 +305,7 @@ function ProjectsShowcase() {
         )
           return;
       }
+      setDirection(1);
       setActiveIndex((index) => (index + 1) % count);
     }, 3000);
     return () => window.clearInterval(timer);
@@ -285,14 +313,16 @@ function ProjectsShowcase() {
 
   return (
     <motion.div {...fadeUp} ref={containerRef}>
-      <AnimatePresence mode="wait" initial={false}>
+      <AnimatePresence mode="popLayout" initial={false} custom={direction}>
         {detailIndex === null ? (
           <motion.div
             key={`slide-${activeIndex}`}
-            initial={{ opacity: 0, x: 48 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -48 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: [0.22, 1, 0.36, 1] }}
           >
             <ProjectSlide
               project={active}
@@ -340,7 +370,7 @@ function ProjectsShowcase() {
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => goTo(activeIndex - 1)}
+                onClick={() => goTo(activeIndex - 1, -1)}
                 aria-label="Previous project"
               >
                 <ArrowLeft />
@@ -348,7 +378,7 @@ function ProjectsShowcase() {
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => goTo(activeIndex + 1)}
+                onClick={() => goTo(activeIndex + 1, 1)}
                 aria-label="Next project"
               >
                 <ArrowRight />
