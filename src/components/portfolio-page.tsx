@@ -23,7 +23,7 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import heroPortrait from "@/assets/gayan-hero-portrait.jpg";
+import heroPortrait from "@/assets/gayan-hero-portrait-v2.jpg";
 import { TypewriterText } from "@/components/typewriter-text";
 import { Button } from "@/components/ui/button";
 import { projects, skillGroups, type Project } from "@/data/portfolio";
