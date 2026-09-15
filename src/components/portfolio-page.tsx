@@ -469,12 +469,17 @@ export function PortfolioPage() {
                 and secure software.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Button asChild size="lg">
+                <Button asChild size="lg" className="font-display text-base font-semibold">
                   <a href="#projects">
                     View my work <ArrowDown />
                   </a>
                 </Button>
-                <Button asChild size="lg" variant="outline">
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="font-display text-base font-semibold"
+                >
                   <a href="/Gayan_Shaminda_Karunarathne_CV.pdf" download>
                     Download CV <Download />
                   </a>
@@ -563,7 +568,7 @@ export function PortfolioPage() {
               >
                 {[
                   ["10 Months", "Industry Experience"],
-                  ["7", "Major Projects"],
+                  ["7+", "Major Projects"],
                   ["BSc Eng. (Hons)", "Computer Engineering"],
                 ].map(([value, label]) => (
                   <div
