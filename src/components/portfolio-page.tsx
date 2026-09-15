@@ -247,7 +247,6 @@ function ProjectsShowcase() {
   const [detailIndex, setDetailIndex] = useState<number | null>(null);
   const [direction, setDirection] = useState(1);
   const containerRef = useRef<HTMLDivElement>(null);
-  const pointerRef = useRef<{ x: number; y: number } | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const count = projects.length;
 
@@ -262,14 +261,22 @@ function ProjectsShowcase() {
 
   const slideVariants = {
     enter: (slideDirection: number) => ({
-      opacity: prefersReducedMotion ? 1 : 0.35,
       x: prefersReducedMotion ? 0 : slideDirection * 36,
     }),
-    center: { opacity: 1, x: 0 },
+    center: { x: 0 },
     exit: (slideDirection: number) => ({
-      opacity: prefersReducedMotion ? 1 : 0,
       x: prefersReducedMotion ? 0 : slideDirection * -36,
     }),
+  };
+
+  const showDetails = () => {
+    setDirection(1);
+    setDetailIndex(activeIndex);
+  };
+
+  const showProjects = () => {
+    setDirection(-1);
+    setDetailIndex(null);
   };
 
   useEffect(() => {
@@ -280,31 +287,8 @@ function ProjectsShowcase() {
   }, []);
 
   useEffect(() => {
-    const onMove = (event: PointerEvent) => {
-      pointerRef.current = { x: event.clientX, y: event.clientY };
-    };
-    window.addEventListener("pointermove", onMove, { passive: true });
-    return () => window.removeEventListener("pointermove", onMove);
-  }, []);
-
-  useEffect(() => {
     if (detailIndex !== null) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const timer = window.setInterval(() => {
-      const el = containerRef.current;
-      if (!el) return;
-      if (el.matches(":focus-within")) return;
-      const pointer = pointerRef.current;
-      if (pointer) {
-        const rect = el.getBoundingClientRect();
-        if (
-          pointer.x >= rect.left &&
-          pointer.x <= rect.right &&
-          pointer.y >= rect.top &&
-          pointer.y <= rect.bottom
-        )
-          return;
-      }
       setDirection(1);
       setActiveIndex((index) => (index + 1) % count);
     }, 3000);
@@ -312,81 +296,77 @@ function ProjectsShowcase() {
   }, [detailIndex, count]);
 
   return (
-    <motion.div {...fadeUp} ref={containerRef}>
-      <AnimatePresence mode="popLayout" initial={false} custom={direction}>
-        {detailIndex === null ? (
-          <motion.div
-            key={`slide-${activeIndex}`}
-            custom={direction}
-            variants={slideVariants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <ProjectSlide
-              project={active}
-              index={activeIndex}
-              onViewDetails={() => setDetailIndex(activeIndex)}
-            />
-          </motion.div>
-        ) : (
-          <motion.div
-            key={`detail-${detailIndex}`}
-            initial={{ opacity: 0, x: 48 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -48 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
-          >
-            <ProjectDetailView
-              project={active}
-              index={detailIndex}
-              onBack={() => setDetailIndex(null)}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <motion.div {...fadeUp} ref={containerRef} layout>
+      <div className="grid overflow-hidden rounded-md">
+        <AnimatePresence initial={false} custom={direction}>
+          {detailIndex === null ? (
+            <motion.div
+              key={`slide-${activeIndex}`}
+              className="[grid-area:1/1]"
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <ProjectSlide project={active} index={activeIndex} onViewDetails={showDetails} />
 
-      {detailIndex === null && (
-        <div className="mt-8 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-2" role="tablist" aria-label="Choose project">
-            {projects.map((project, index) => (
-              <button
-                key={project.title}
-                type="button"
-                role="tab"
-                aria-selected={index === activeIndex}
-                aria-label={`Show ${project.title}`}
-                onClick={() => goTo(index)}
-                className={`h-1.5 rounded-full transition-all duration-300 ${index === activeIndex ? "w-8 bg-primary" : "w-3 bg-border hover:bg-muted-foreground"}`}
-              />
-            ))}
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="font-mono text-xs text-muted-foreground">
-              0{activeIndex + 1} / 0{count}
-            </span>
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => goTo(activeIndex - 1, -1)}
-                aria-label="Previous project"
-              >
-                <ArrowLeft />
-              </Button>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => goTo(activeIndex + 1, 1)}
-                aria-label="Next project"
-              >
-                <ArrowRight />
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+              <div className="mt-8 flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2" role="tablist" aria-label="Choose project">
+                  {projects.map((project, index) => (
+                    <button
+                      key={project.title}
+                      type="button"
+                      role="tab"
+                      aria-selected={index === activeIndex}
+                      aria-label={`Show ${project.title}`}
+                      onClick={() => goTo(index)}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${index === activeIndex ? "w-8 bg-primary" : "w-3 bg-border hover:bg-muted-foreground"}`}
+                    />
+                  ))}
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="font-mono text-xs text-muted-foreground">
+                    0{activeIndex + 1} / 0{count}
+                  </span>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => goTo(activeIndex - 1, -1)}
+                      aria-label="Previous project"
+                    >
+                      <ArrowLeft />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => goTo(activeIndex + 1, 1)}
+                      aria-label="Next project"
+                    >
+                      <ArrowRight />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key={`detail-${detailIndex}`}
+              className="[grid-area:1/1]"
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: prefersReducedMotion ? 0 : 0.42, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <ProjectDetailView project={active} index={detailIndex} onBack={showProjects} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </motion.div>
   );
 }
