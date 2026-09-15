@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   ArrowDown,
   ArrowLeft,
@@ -19,7 +19,6 @@ import {
   Mail,
   Menu,
   Network,
-  Plus,
   ShieldCheck,
   Sparkles,
   X,
@@ -30,7 +29,8 @@ import { Button } from "@/components/ui/button";
 import { projects, skillGroups, type Project } from "@/data/portfolio";
 
 const navItems = [
-  ["About", "#about"],
+  ["About Me", "#about"],
+  ["Education", "#education"],
   ["Experience", "#experience"],
   ["Projects", "#projects"],
   ["Skills", "#skills"],
@@ -46,29 +46,47 @@ const fadeUp = {
 
 const skillIcons = [Code2, Braces, Database, Sparkles, CloudCog, Network];
 
+function PortraitGlow() {
+  const prefersReducedMotion = useReducedMotion();
+
+  return (
+    <div className="pointer-events-none absolute inset-0 z-0" aria-hidden="true">
+      <motion.div
+        className="absolute inset-[16%] rounded-full bg-primary/15 blur-3xl"
+        animate={
+          prefersReducedMotion
+            ? undefined
+            : { opacity: [0.3, 0.58, 0.3], scale: [0.96, 1.04, 0.96] }
+        }
+        transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
+      />
+    </div>
+  );
+}
+
 function SectionHeading({
-  index,
   eyebrow,
   title,
   text,
 }: {
-  index: string;
   eyebrow: string;
   title: string;
   text?: string;
 }) {
   return (
-    <motion.div {...fadeUp} className="mb-12 max-w-3xl md:mb-16">
-      <div className="mb-4 flex items-center gap-3 font-mono text-xs uppercase tracking-widest text-primary">
-        <span>{index}</span>
-        <span className="h-px w-8 bg-primary/50" />
-        <span>{eyebrow}</span>
+    <motion.div {...fadeUp} className="mx-auto mb-12 max-w-5xl text-center md:mb-16">
+      <div className="flex w-full items-center gap-5 sm:gap-8">
+        <span className="h-px flex-1 bg-border" aria-hidden="true" />
+        <h2 className="shrink-0 font-display text-3xl font-semibold leading-tight text-primary sm:text-4xl md:text-5xl">
+          {eyebrow}
+        </h2>
+        <span className="h-px flex-1 bg-border" aria-hidden="true" />
       </div>
-      <h2 className="font-display text-3xl font-semibold leading-tight text-foreground sm:text-4xl md:text-5xl">
+      <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-foreground md:text-lg">
         {title}
-      </h2>
+      </p>
       {text && (
-        <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground md:text-lg">
+        <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-muted-foreground md:text-base">
           {text}
         </p>
       )}
@@ -484,17 +502,17 @@ export function PortfolioPage() {
               initial={{ opacity: 0, scale: 0.97 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative mx-auto aspect-[4/5] w-full max-w-[420px]"
+              className="relative isolate mx-auto aspect-square w-full max-w-[430px] md:max-w-[700px]"
             >
+              <PortraitGlow />
               <div
-                className="absolute -inset-3 border border-dashed border-primary/20"
-                aria-hidden="true"
-              />
-              <div className="relative h-full overflow-hidden border border-primary/25 bg-surface shadow-2xl shadow-primary/10">
+                className="absolute inset-[7%] z-20 overflow-hidden border border-primary/40 bg-surface shadow-2xl shadow-primary/15"
+                style={{ borderRadius: "48% 52% 45% 55% / 55% 43% 57% 45%" }}
+              >
                 <img
                   src={heroPortrait}
                   alt="Gayan Shaminda Karunarathne"
-                  className="h-full w-full object-cover object-top"
+                  className="h-full w-full object-cover object-[center_18%]"
                   width={1122}
                   height={1402}
                   fetchPriority="high"
@@ -504,23 +522,14 @@ export function PortfolioPage() {
                   aria-hidden="true"
                 />
               </div>
-              <span
-                className="absolute -bottom-3 -left-3 h-16 w-16 border-b border-l border-primary/60"
-                aria-hidden="true"
-              />
-              <span
-                className="absolute -right-3 -top-3 h-16 w-16 border-r border-t border-primary/60"
-                aria-hidden="true"
-              />
             </motion.div>
           </div>
         </section>
 
-        <section id="about" className="scroll-mt-16 py-24 md:py-32">
+        <section id="about" className="scroll-mt-16 py-12 md:py-16">
           <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
             <SectionHeading
-              index="01"
-              eyebrow="About & education"
+              eyebrow="About me"
               title="Engineering systems that hold up beyond the demo."
             />
             <div className="grid gap-12 lg:grid-cols-[1.2fr_0.8fr]">
@@ -529,13 +538,13 @@ export function PortfolioPage() {
                 className="max-w-3xl space-y-5 text-lg leading-8 text-muted-foreground"
               >
                 <p>
-                  I’m a Computer Engineering graduate from the University of Ruhuna with hands-on
-                  experience contributing to real production applications.
+                  I’m a Computer Engineering graduate from the University of Ruhuna with 10 months
+                  of industry experience contributing to production software.
                 </p>
                 <p>
-                  My interests span full-stack systems, backend engineering, AI/ML, cloud
-                  infrastructure and secure software—with an emphasis on building software that is
-                  reliable, scalable and maintainable.
+                  My work spans full-stack development, backend engineering, AI-powered
+                  applications, cloud systems, and secure software, with a focus on building
+                  solutions that are reliable, scalable, and maintainable.
                 </p>
               </motion.div>
               <motion.div
@@ -544,7 +553,7 @@ export function PortfolioPage() {
               >
                 {[
                   ["10 Months", "Industry Experience"],
-                  ["4+", "Major Engineering Projects"],
+                  ["7", "Major Projects"],
                   ["BSc Eng. (Hons)", "Computer Engineering"],
                 ].map(([value, label]) => (
                   <div
@@ -557,21 +566,23 @@ export function PortfolioPage() {
                 ))}
               </motion.div>
             </div>
+          </div>
+        </section>
 
-            <motion.article
-              {...fadeUp}
-              className="mt-14 grid gap-8 border-t border-border pt-8 lg:mt-16 lg:grid-cols-[0.72fr_1.28fr]"
-            >
+        <section id="education" className="scroll-mt-16 border-t border-border py-12 md:py-16">
+          <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
+            <SectionHeading
+              eyebrow="Education"
+              title="A strong foundation in Computer Engineering."
+            />
+            <motion.article {...fadeUp} className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr]">
               <div>
                 <div className="mb-5 flex items-center gap-3">
                   <GraduationCap className="h-7 w-7 text-primary" />
-                  <span className="font-mono text-xs uppercase tracking-widest text-primary">
-                    Education
+                  <span className="font-mono text-sm uppercase tracking-widest text-primary">
+                    Jun 2022 — Sep 2026
                   </span>
                 </div>
-                <p className="font-mono text-xs uppercase tracking-widest text-primary">
-                  Jun 2022 — Sep 2026
-                </p>
                 <h3 className="mt-3 font-display text-2xl font-semibold">University of Ruhuna</h3>
                 <p className="mt-1 text-muted-foreground">Faculty of Engineering</p>
               </div>
@@ -579,7 +590,6 @@ export function PortfolioPage() {
                 <p className="font-display text-2xl font-medium">
                   BSc Engineering (Hons) in Computer Engineering
                 </p>
-                <p className="mt-3 text-lg text-primary">GPA 3.46 / 4.00</p>
                 <div className="mt-7 flex flex-wrap gap-2">
                   {[
                     "Data Structures & Algorithms",
@@ -606,11 +616,10 @@ export function PortfolioPage() {
 
         <section
           id="experience"
-          className="scroll-mt-16 border-y border-border bg-surface py-24 md:py-32"
+          className="scroll-mt-16 border-y border-border bg-surface py-12 md:py-16"
         >
           <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
             <SectionHeading
-              index="02"
               eyebrow="Experience"
               title="Production experience, from interface to release."
             />
@@ -672,39 +681,23 @@ export function PortfolioPage() {
           </div>
         </section>
 
-        <section id="projects" className="scroll-mt-16 py-24 md:py-32">
+        <section id="projects" className="scroll-mt-16 py-12 md:py-16">
           <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
             <SectionHeading
-              index="03"
               eyebrow="Featured projects"
               title="Applied engineering across AI, security and cloud systems."
               text="Selected work that demonstrates system design, technical depth and practical implementation across the stack."
             />
             <ProjectsShowcase />
-            <motion.div
-              {...fadeUp}
-              className="mt-6 flex flex-col items-start justify-between gap-5 border border-dashed border-border p-6 sm:flex-row sm:items-center md:p-8"
-            >
-              <div>
-                <p className="font-display text-xl font-semibold">Other work</p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Space reserved for DevOps infrastructure and future engineering projects.
-                </p>
-              </div>
-              <span className="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-muted-foreground">
-                <Plus className="h-4 w-4" /> Coming later
-              </span>
-            </motion.div>
           </div>
         </section>
 
         <section
           id="skills"
-          className="scroll-mt-16 border-y border-border bg-surface py-24 md:py-32"
+          className="scroll-mt-16 border-y border-border bg-surface py-12 md:py-16"
         >
           <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
             <SectionHeading
-              index="04"
               eyebrow="Technical skills"
               title="A practical toolkit for modern software delivery."
             />
