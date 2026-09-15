@@ -1,29 +1,87 @@
-# Welcome to your Lovable project
+# Gayan Shaminda — Software Engineering Portfolio
 
-This project was built with [Lovable](https://lovable.dev).
+The source code for [gayanshaminda.me](https://gayanshaminda.me), a responsive portfolio presenting my software engineering experience, education, technical skills, and selected projects.
 
-## Build with Lovable
+## Overview
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+The site is designed as a focused technical profile for recruiters and engineering teams. It combines a dark engineering-inspired visual system with subtle motion, an interactive project showcase, downloadable CV, and direct contact links.
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+## Features
 
-## Development
+- Responsive hero section with animated role text
+- Personal portrait and professional introduction
+- About Me and Education sections
+- Seven-project interactive showcase
+- Automatic project rotation with manual navigation
+- Expandable project details and repository links
+- Categorized technical skills
+- Downloadable CV
+- Accessible reduced-motion support
+- Responsive navigation and mobile layout
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+## Technology Stack
 
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+| Area | Technologies |
+| --- | --- |
+| Framework | TanStack Start, React, TypeScript |
+| Build tooling | Vite, Nitro |
+| Styling | Tailwind CSS |
+| Components | Radix UI |
+| Motion | Motion for React |
+| Hosting | Cloudflare Workers |
+| Domain | `gayanshaminda.me` |
+
+## Project Structure
+
+```text
+.
+|-- public/                Static files and downloadable CV
+|-- src/assets/            Portrait and project artwork
+|-- src/components/        Portfolio and reusable UI components
+|-- src/data/portfolio.ts  Project and skill content
+|-- src/routes/            TanStack Start routes
+|-- src/styles.css         Design system and global styles
+`-- vite.config.ts
+```
+
+## Local Development
+
+### Prerequisites
+
+- Node.js 20 or newer
+- npm
+
+### Install and run
+
+```powershell
+npm install
 npm run dev
 ```
 
-## Built with
+Open the local URL printed by Vite.
 
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
+## Available Commands
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm run build` | Create a production Cloudflare build |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Run ESLint |
+| `npm run format` | Format the codebase with Prettier |
+
+## Deployment
+
+The `main` branch is connected to Cloudflare Workers. A successful push triggers the configured production build and deployment. The custom domain is managed through Cloudflare DNS.
+
+Before deploying, verify that `npm run build` succeeds and that downloadable assets in `public/` are present.
+
+## Content Updates
+
+- Update projects and skill groups in `src/data/portfolio.ts`.
+- Update page copy and section structure in `src/components/portfolio-page.tsx`.
+- Replace CV and image assets without changing public links unless the corresponding references are updated.
+
+## Author
+
+Designed and developed by [Gayan Shaminda](https://github.com/Gayanshaminda).
